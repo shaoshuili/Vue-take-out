@@ -1,7 +1,7 @@
 <template>
   <div class="msite">
     <!--首页头部-->
-    <TopHeader title="昌平区北七家宏福科技园">
+    <TopHeader :title="address.name">
       <span class="header_search" slot="left">
         <i class="iconfont icon-sousuo"></i>
       </span>
@@ -130,17 +130,29 @@
 </template>
 
 <script>
+import Swiper from "swiper";
   import {mapState} from "vuex"
   import ShopList from "../../components/ShopList/ShopList.vue"
 
   export default {
+    mounted(){
+      this.$store.dispatch("getFoodsCategorys");
 
-    /*computed:{
+      new Swiper ('.swiper-container', {
+        loop: true,
+        // 如果需要分页器
+        pagination: '.swiper-pagination',
+      })
+    },
+    computed:{
       ...mapState(["address"])
-    },*/
+    },
     components:{
       ShopList
-    }
+    },
+   /*mounted(){
+      this.$store.dispatch("getFoodsCategorys")
+   }*/
   }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">

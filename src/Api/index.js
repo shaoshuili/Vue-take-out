@@ -6,12 +6,13 @@ import ajax from "./ajax"
 //|参数		|是否必选 |类型     |说明
 // |geohash    |Y       |string   |经纬度
 
-
+//根据经纬度获取地理位置
 export const reqAddress = (geohash) => ajax('/api/position/'+geohash);
 
-
-
+//获取食品分类列表
 //http://localhost:3000/index_category
+export const reqFoodsCategorys = (categorys)=>ajax("/api/index_category");
+
 
 
 

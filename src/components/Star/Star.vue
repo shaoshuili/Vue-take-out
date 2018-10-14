@@ -1,14 +1,42 @@
 <template>
-  <div class="star star-24">
-    <span class="star-item on."></span>
-    <span class="star-item on"></span>
-    <span class="star-item on"></span>
-    <span class="star-item half"></span>
-    <span class="star-item off"></span>
+  <div class="star" :class="`star-${size}`">
+    <span class="star-item"  v-for="(sc, index) in starClasses" :key="index" :class="sc"></span>
   </div>
 </template>
 <script>
-  export default {}
+  const CLASS_ON = 'on';
+  const CLASS_HALF = 'half';
+  const CLASS_OFF = 'off';
+  export default {
+    props:{
+      score: Number,
+      size: Number,
+    },
+    computed: {
+
+      starClasses(){
+        //定义一个空数组,存放星星的类名
+        const scs = [];
+        //根据评分计算星星
+        const {score} = this;
+        //3.5 =>  3 1 1
+        const scoreInteger = Math.floor(score);
+        for (let i = 0; i <scoreInteger; i++) {
+          scs.push(CLASS_ON);
+        }
+        //小数可能有误差，*10
+        if(score*10 - scoreInteger*10 >5){
+          scs.push(CLASS_HALF);
+        }
+        //
+        while (scs.length < 5){
+          scs.push(CLASS_OFF);
+        }
+        return scs;
+      },
+
+    }
+  }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../../common/stylus/mixins.styl"
@@ -59,5 +87,6 @@
         &.half
           bg-image('./images/star24_half')
         &.off
-          bg-image('./images//star24_off')
+          bg-image('./images/star24_off')
 </style>
+

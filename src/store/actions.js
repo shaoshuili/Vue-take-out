@@ -6,12 +6,14 @@
 //发送请求
 import {
   reqAddress,
-  reqFoodsCategorys
+  reqFoodsCategorys,
+  reqShops
 }
   from "../Api"
 //获取数据
 import {RECEIVE_ADDRESS,
-  RECEIVE_CATEGORYS
+  RECEIVE_CATEGORYS,
+  RECEIVE_SHOPS
 } from "./mutation-types"
 
 
@@ -22,17 +24,28 @@ export default {
     //传入经度，纬度
     const {latitude,longitude} = state;
 
-    const result = await reqAddress(latitude+","+longitude);//code:0,data
+    const result = await reqAddress(latitude+","+longitude);//code:0,data,
    if(result.code=== 0){
        //发送成功，得到数据
        const address = result.data;
        commit(RECEIVE_ADDRESS,{address})
      }
   },
-  //异步获取食品分类
-  async getFoodsCategorys({commit}) {
+  //异步获商家分类
+  async getCategorys({commit}) {
     const result =  await reqFoodsCategorys();
-    commit(RECEIVE_CATEGORYS,{categorys:result.data})//分类在结果中
+    if(result.code === 0){
+      const categorys = result.data;
+      commit(RECEIVE_CATEGORYS,{categorys})//分类在结果中
+    }
+  },
+  async getShops({commit,state}) {
+    const {latitude,longitude} = state;
+    const result =  await reqShops({latitude,longitude});
+    if(result.code === 0){
+      const shops = result.data;
+      commit(RECEIVE_SHOPS,{shops})//分类在结果中
+    }
   }
 }
 

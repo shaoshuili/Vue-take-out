@@ -32,8 +32,8 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
   记得发请求
 
 
-
 day02
+
 ## ajax请求函数封装
  #bug
   1.index 调用ajax函数，函数返回值，一行代码可以=》返回；或者{return}
@@ -41,8 +41,14 @@ day02
  ##请求函数
     1.异步获取商分类并展示
       1)根据api,发送请求
-      2）返回二维数组[[],[],....]
-       分析：分类如何展示
+      2）返回一个数组[........]
+       分析：coumputed（）
+       页面是需要分页展示的，[[],[],...],现在需要把大数组，
+       分成多个小数组展示,每一页要想显示，把它变为二维数组(categorysArr)，
+       每个数组length=8
+
+
+
 
 
 

@@ -11,9 +11,10 @@ export const reqAddress = (geohash) => ajax('/api/position/'+geohash);
 
 //获取食品分类列表
 //http://localhost:3000/index_category
-export const reqFoodsCategorys = (categorys)=>ajax("/api/index_category");
+export const reqFoodsCategorys = ()=>ajax("/api/index_category");
 
-
+//根据经纬度获取商铺列表
+export const reqShops = (latitude,longitude)=>ajax("/api/shops",{latitude,longitude});
 
 
 

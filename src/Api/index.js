@@ -16,7 +16,19 @@ export const reqFoodsCategorys = ()=>ajax("/api/index_category");
 //根据经纬度获取商铺列表
 export const reqShops = (latitude,longitude)=>ajax("/api/shops",{latitude,longitude});
 
+//发送短信验证码http://localhost:3000/sendcode
+export const reqSendCode = (phone)=>ajax("/api/sendcode",{phone});
 
-
-
+//手机号验证码登陆http://localhost:3000/login_sms
+export const reqSmsLogin=(phone,code)=>ajax("/api/lohin_sms",{phone,code},"POST");
+//用户名密码登陆http://localhost:3000/login_pwd
+export const reqPwdLogin = ({name,pwd,captcha})=>ajax("/api/login_pwd",{
+  name,
+  pwd,
+  captcha
+},"POST");
+//用户退出
+export const reqLogOut = ()=>ajax("/api/logout");
+//获取用户信息
+export const reqUserInfo=()=>ajax("/api/userinfo");
 

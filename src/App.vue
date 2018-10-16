@@ -10,7 +10,9 @@
   export default {
     mounted () {
       // 异步获取address, 并保存到state
-      this.$store.dispatch('getAddress')
+      this.$store.dispatch('getAddress');
+      //获取用户信息
+      this.$store.dispatch("getUserInfo")
     },
       components :{
       FooterGuide

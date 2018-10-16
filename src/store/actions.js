@@ -7,13 +7,17 @@
 import {
   reqAddress,
   reqFoodsCategorys,
-  reqShops
+  reqShops,
+  reqLogOut,
+  reqUserInfo
 }
   from "../Api"
 //获取数据
 import {RECEIVE_ADDRESS,
   RECEIVE_CATEGORYS,
-  RECEIVE_SHOPS
+  RECEIVE_SHOPS,
+  RECEIVE_USER,
+  RESET_USER
 } from "./mutation-types"
 
 
@@ -39,6 +43,7 @@ export default {
       commit(RECEIVE_CATEGORYS,{categorys})//分类在结果中
     }
   },
+  //异步获取商家信息
   async getShops({commit,state}) {
     const {latitude,longitude} = state;
     const result =  await reqShops({latitude,longitude});
@@ -46,6 +51,25 @@ export default {
       const shops = result.data;
       commit(RECEIVE_SHOPS,{shops})//分类在结果中
     }
+  },
+  //同步保存用户信息
+    saveUser({commit},user){
+     commit(RECEIVE_USER,{user})
+    },
+  //异步退出登录
+  async logout({commit}){
+   const result  = await reqLogOut();
+   if(result.code === 0){
+     commit(RESET_USER,)
+   }
+  },
+  //异步获取用户信息
+  async getUserInfo({commit}){
+   const result  =  await reqUserInfo();
+   if(result.code === 0){
+     const user = result.data;//取出userInfo
+     commit(RECEIVE_USER,{user});
+   }
   }
 }
 

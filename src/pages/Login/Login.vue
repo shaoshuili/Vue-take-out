@@ -4,40 +4,48 @@
       <div class="login_header">
         <h2 class="login_logo">硅谷外卖</h2>
         <div class="login_header_title">
-          <a href="javascript:;" class="on">短信登录</a>
-          <a href="javascript:;" >密码登录</a>
+          <a href="javascript:;" :class="{on: loginWay}" @click="loginWay=true">短信登录</a>
+          <a href="javascript:;" :class="{on: !loginWay}" @click="loginWay=false">密码登录</a>
         </div>
       </div>
       <div class="login_content">
         <form>
-          <div class="on">
+          <div :class="{on: loginWay}">
             <section class="login_message">
-              <input type="tel" maxlength="11" placeholder="手机号">
-              <button disabled="disabled" class="get_verification" >获取验证码</button>
+              <input type="tel" maxlength="11" placeholder="手机号" v-model="phone">
+              <button :disabled="!isRightPhone || computeTime>0" class="get_verification"
+                      :class="{right_phone_number: isRightPhone}" @click.prevent="sendCode">
+                {{computeTime>0 ? `已发送(${computeTime}s)` : '获取验证码'}}
+              </button>
             </section>
             <section class="login_verification">
-              <input type="tel" maxlength="8" placeholder="验证码">
+              <input type="tel" maxlength="8" placeholder="验证码" v-model="code">
             </section>
             <section class="login_hint">
-              温馨提示：未注册硅谷外卖帐号的手机号登录时将自动注册，且代表已同意
+              温馨提示：未注册硅谷外卖帐号的手机号，登录时将自动注册，且代表已同意
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
-          <div>
+          <div :class="{on: !loginWay}">
             <section>
               <section class="login_message">
-                <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
+                <input type="text" maxlength="11" placeholder="手机/邮箱/用户名" v-model="name">
               </section>
               <section class="login_verification">
-                <input type="tel" maxlength="8" placeholder="密码">
-                <div class="switch_button off">
-                  <div class="switch_circle"></div>
-                  <span class="switch_text">...</span>
+                <input :type="isShowPwd? 'text' : 'password'" maxlength="8" placeholder="密码" v-model="pwd">
+                <div class="switch_button" @click="isShowPwd=!isShowPwd" :class="isShowPwd?'on':'off'">
+                  <div class="switch_circle" :class="{right: isShowPwd}"></div>
+                  <span class="switch_text">{{isShowPwd ? 'abc' : '...'}}</span>
                 </div>
+              </section>
+              <section class="login_message">
+                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
+                <img class="get_verification" src="http://localhost:4000/captcha" alt="captcha"
+                     ref='captcha' @click="updateCaptcha">
               </section>
             </section>
           </div>
-          <button class="login_submit">登录</button>
+          <button class="login_submit" @click.prevent="login">登录</button>
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
@@ -48,10 +56,116 @@
   </section>
 </template>
 <script>
-  export default {}
+  import {Toast, MessageBox} from 'mint-ui'
+  import {reqSendCode, reqPwdLogin, reqSmsLogin} from '../../Api'
+
+  export default {
+    data() {
+      return {
+        loginWay: false, // true: 短信, false: 密码
+        phone: '', // 手机号
+        code: '', // 短信验证码
+        name: '', // 用户名
+        pwd: '', // 密码
+        captcha: '', // 图形验证码
+        computeTime: 0, // 倒计时剩余的时间
+        isShowPwd: false, // 是否显示密码
+      }
+    },
+
+    computed: {
+      isRightPhone() {
+        return /^1\d{10}$/.test(this.phone)
+      }
+    },
+    methods: {
+      // 发送验证码
+      async sendCode () {
+        // alert('----')
+
+        // 启动倒计时
+        this.computeTime = 30
+        // 启动循环定时器, 每隔1s减1, 直到0为止
+        const intervalId = setInterval(() => {
+          if(this.computeTime<=0) {
+            // 清除定时器
+            clearInterval(intervalId)
+            this.computeTime = 0
+            return
+          }
+          this.computeTime--
+        }, 1000)
+
+        // 发请求: 发送短信验证码
+        const result = await reqSendCode(this.phone)
+        if(result.code===0) {
+          // alert('验证码已发送')
+          Toast('验证码已发送')
+        } else {
+          // 停止倒计时
+          this.computeTime = 0
+          // 显示警告提示
+          // alert('警告提示: '+result.msg)
+          MessageBox.alert(result.msg).then(action => {
+            console.log('点击确定')
+          });
+        }
+      },
+
+      // 更新图形验证码
+      updateCaptcha () {
+        // 告诉浏览一个新的url, 浏览器就会自动发请求
+        this.$refs.captcha.src = 'http://localhost:4000/captcha?time='+Date.now()
+      },
+
+      // 请求登陆
+      async login () {
+        let result
+        // 进行前台表单验证
+        if(this.loginWay) { // 短信
+          const {phone, code} = this
+          if(!this.isRightPhone) {
+            return MessageBox.alert('请输入正确手机号')
+          } else if (!/^\d{6}$/.test(code)) {
+            return MessageBox.alert('请输入正确验证码')
+          }
+          // 发短信登陆的请求
+          result = await reqSmsLogin(phone, code)
+        } else { // 密码
+          const {name, pwd, captcha} = this
+          if(!name) {
+            return MessageBox.alert('用户名必须指定')
+          } else if (!pwd) {
+            return MessageBox.alert('密码必须指定')
+          } else if (!/^.{4}$/.test(captcha)) {
+            return MessageBox.alert('请输入正确验证码')
+          }
+          // 发密码登陆的请求
+          result = await reqPwdLogin({name, pwd, captcha})
+        }
+        // 请求结束后, 停止倒计时
+        this.computeTime = 0
+        // 更新验证码
+        this.updateCaptcha()
+        // 根据请求的结果进行相应处理
+        if(result.code===0) { // 登录成功，保存用户名信息
+          const user = result.data
+         // 将user保存到state
+           this.$store.dispatch('saveUser', user);
+         // 跳转到个人中心界面
+          this.$router.replace('/profile')
+          console.log(11111);
+        } else { // 失败
+          MessageBox.alert(result.msg)
+        }
+
+      }
+    }
+  }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../../common/stylus/mixins.styl"
+
   .loginContainer
     width 100%
     height 100%
@@ -69,7 +183,7 @@
         .login_header_title
           padding-top 40px
           text-align center
-          >a
+          > a
             color #333
             font-size 14px
             padding-bottom 4px
@@ -80,8 +194,8 @@
               font-weight 700
               border-bottom 2px solid #02a774
       .login_content
-        >form
-          >div
+        > form
+          > div
             display none
             &.on
               display block
@@ -111,6 +225,8 @@
                 color #ccc
                 font-size 14px
                 background transparent
+                &.right_phone_number
+                  color black
             .login_verification
               position relative
               margin-top 16px
@@ -121,7 +237,7 @@
                 font-size 12px
                 border 1px solid #ddd
                 border-radius 8px
-                transition background-color .3s,border-color .3s
+                transition background-color .3s, border-color .3s
                 padding 0 6px
                 width 30px
                 height 16px
@@ -138,8 +254,7 @@
                     color #ddd
                 &.on
                   background #02a774
-                >.switch_circle
-                //transform translateX(27px)
+                > .switch_circle
                   position absolute
                   top -1px
                   left -1px
@@ -148,14 +263,16 @@
                   border 1px solid #ddd
                   border-radius 50%
                   background #fff
-                  box-shadow 0 2px 4px 0 rgba(0,0,0,.1)
+                  box-shadow 0 2px 4px 0 rgba(0, 0, 0, .1)
                   transition transform .3s
+                  &.right
+                    transform translateX(27px)
             .login_hint
               margin-top 12px
               color #999
               font-size 14px
               line-height 20px
-              >a
+              > a
                 color #02a774
           .login_submit
             display block
@@ -181,7 +298,7 @@
         left 5px
         width 30px
         height 30px
-        >.iconfont
+        > .iconfont
           font-size 20px
           color #999
 </style>

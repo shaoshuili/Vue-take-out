@@ -6,6 +6,7 @@ import store from "./store"
 import {Button} from "mint-ui"
 
 import "swiper/dist/css/swiper.min.css"
+import "./mock/mockServer"
 
 Vue.component(Button.name, Button)
 //注册全局组件("组件名",组件)

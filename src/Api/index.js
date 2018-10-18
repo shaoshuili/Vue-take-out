@@ -1,6 +1,5 @@
 //引入ajax请求函数
 import ajax from "./ajax"
-
 //[1、根据经纬度获取位置详情](#1根据经纬度获取位置详情)<br/>
 //[http://localhost:3000/position/40.10038,116.36867]
 //|参数		|是否必选 |类型     |说明
@@ -31,4 +30,10 @@ export const reqPwdLogin = ({name,pwd,captcha})=>ajax("/api/login_pwd",{
 export const reqLogOut = ()=>ajax("/api/logout");
 //获取用户信息
 export const reqUserInfo=()=>ajax("/api/userinfo");
+
+//mock数据，发送请求
+//获取食物信息
+export const reqGoods = ()=>ajax("/goods");
+export const reqRatings = ()=>ajax("/ratings");
+export const reqInfo = ()=>ajax('/info');
 

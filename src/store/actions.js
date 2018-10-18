@@ -9,7 +9,10 @@ import {
   reqFoodsCategorys,
   reqShops,
   reqLogOut,
-  reqUserInfo
+  reqUserInfo,
+  reqInfo,
+  reqGoods,
+  reqRatings
 }
   from "../Api"
 //获取数据
@@ -17,7 +20,9 @@ import {RECEIVE_ADDRESS,
   RECEIVE_CATEGORYS,
   RECEIVE_SHOPS,
   RECEIVE_USER,
-  RESET_USER
+  RESET_USER,
+  RECEIVE_INFO,
+  RECEIVE_GOODS
 } from "./mutation-types"
 
 
@@ -40,6 +45,7 @@ export default {
     const result =  await reqFoodsCategorys();
     if(result.code === 0){
       const categorys = result.data;
+      console.log(categorys);
       commit(RECEIVE_CATEGORYS,{categorys})//分类在结果中
     }
   },
@@ -69,6 +75,33 @@ export default {
    if(result.code === 0){
      const user = result.data;//取出userInfo
      commit(RECEIVE_USER,{user});
+   }
+  },
+  //异步获取食物信息
+
+  async getGoods({commit},cb){
+   const result = await reqGoods();
+   if(result.code === 0){
+     const goods = result.data;
+     commit(RECEIVE_GOODS,{goods});
+     //数据更新之后，判断函数类型及其调用
+     typeof cb === 'function'&& cb();
+   }
+  },
+  //获取商家信息
+  async getInfo({commit}){
+   const result = await reqInfo();
+   if(result.code === 0){
+     const info = result.data;
+     commit(RECEIVE_INFO,{info})
+   }
+  },
+  //得到好评
+  async getRatings({commit}){
+   const result = await reqRatings();
+   if(result.code === 0){
+     const ratings = result.data;
+     commit(RECEIVE_INFO,{ratings})
    }
   }
 }

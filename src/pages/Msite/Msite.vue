@@ -1,7 +1,7 @@
 <template>
   <div class="msite">
     <!--首页头部-->
-    <TopHeader :title="address.name">
+    <TopHeader :title="address.address">
       <span class="header_search" slot="left">
         <i class="iconfont icon-sousuo"></i>
       </span>

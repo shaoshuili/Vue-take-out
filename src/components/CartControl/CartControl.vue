@@ -2,12 +2,13 @@
   <div class="cartcontrol">
     <transition name="move">
       <!--减少,有数量显示-->
-      <div class="iconfont icon-remove_circle_outline" v-if="food.count" @click="updateFoodCount(false)"></div>
+      <div class="iconfont icon-remove_circle_outline" v-if="food.count"
+           @click.stop="updateFoodCount(false)"></div>
     </transition>
     <!--count-->
     <div class="cart-count" v-if="food.count">{{food.count}}</div>
     <!--增加-->
-    <div class="iconfont icon-add_circle" @click="updateFoodCount(true)" ></div>
+    <div class="iconfont icon-add_circle" @click.stop="updateFoodCount(true)" ></div>
   </div>
 </template>
 <script>
@@ -20,6 +21,7 @@
       updateFoodCount(isAdd){
         const {food} = this;
         this.$store.dispatch("updateFoodCount",{isAdd,food});
+        console.log('update()');
       }
     }
   }

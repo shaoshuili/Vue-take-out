@@ -45,6 +45,7 @@
     </div>
     <!--父组件没有food，点击的时候给添加food-->
     <Food :food="food" ref="food"/>
+    <ShopCart :food="food"/>
   </div>
 </template>
 <script>
@@ -61,7 +62,8 @@
   *
   * */
   import BScroll from 'better-scroll';
-  import Food from '../../../components/Food/Food.vue'
+  import Food from '../../../components/Food/Food.vue';
+  import ShopCart from '../../../components/ShopCart/ShopCart.vue'
   import {mapState} from "vuex";
   export default {
     data() {
@@ -72,7 +74,8 @@
       }
     },
     components:{
-      Food
+      Food,
+      ShopCart
     },
     computed: {
       ...mapState(["goods"]),

@@ -1,31 +1,34 @@
 <template>
-  <div class="food" v-if="isShow">
-    <div class="food-content">
-      <div class="image-header">
-        <img :src="food.image">
-        <p class="foodpanel-desc">{{food.info}}</p>
-        <div class="back" @click="toggleShow">
-          <i class="iconfont icon-arrow_left"></i>
-        </div>
-      </div>
-      <div class="content">
-        <h1 class="title">{{food.name}}</h1>
-        <div class="detail">
-          <span class="sell-count">月售{{food.sellCount}}份</span>
-          <span class="rating" >
-            好评率{{food.rating}}%</span>
-        </div>
-        <div class="price">
-          <span class="now">￥9</span>
-          <span class="old" style="display: none;">￥</span>
-        </div>
-        <div class="cartcontrol-wrapper">
-          cartcontrol组件
-        </div>
-      </div>
-    </div>
-    <div class="food-cover" @click="toggleShow"></div>
-  </div>
+ <transition name="fade">
+   <div class="food" v-if="isShow">
+     <div class="food-content">
+       <div class="image-header">
+         <img :src="food.image">
+         <p class="foodpanel-desc">{{food.info}}</p>
+         <div class="back" @click="toggleShow">
+           <i class="iconfont icon-arrow_left"></i>
+         </div>
+       </div>
+       <div class="content">
+         <h1 class="title">{{food.name}}</h1>
+         <div class="detail">
+           <span class="sell-count">月售{{food.sellCount}}份</span>
+           <span class="rating" v-for="(rating, index) in food.ratings" :key="index">
+            好评率{{rating.text}}%</span>
+         </div>
+         <div class="price">
+           <span class="now">￥9</span>
+           <span class="old" style="display: none;">￥</span>
+         </div>
+         <div class="cartcontrol-wrapper">
+           <CartControl :food="food"/>
+         </div>
+       </div>
+     </div>
+     <div class="food-cover" @click="toggleShow"></div>
+
+   </div>
+ </transition>
 </template>
 
 <script>
@@ -33,7 +36,6 @@
     props:{
       food:Object,
           },
-
     data(){
       return{
         isShow:false

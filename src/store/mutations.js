@@ -48,16 +48,20 @@ export default {
   },
 
   [INCREMENT_FOOD_COUNT](state, {food}) {
-    if (food.count) {
+    if (food.count===0) {
       food.count++;
     } else {
       Vue.set(food, 'count', 1)//指定新的属性count，且指定值为1
     }
-  },
+    state.shopCartArr.push(food);
+},
 
   [DEINCREMENT_FOOD_COUNT](state, {food}) {
     if (food.count) {
       food.count--;
+    }
+    if(food.count === 0){//如果没有食物
+      state.shopCartArr.splice(state.shopCartArr.indexOf(food),1)
     }
   }
 }

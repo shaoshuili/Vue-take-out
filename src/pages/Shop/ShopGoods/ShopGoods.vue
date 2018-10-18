@@ -18,7 +18,7 @@
             <h1 class="title">{{good.name}}</h1>
             <ul>
               <li class="food-item bottom-border-1px"
-                  v-for="(food,index) in good.foods" :key="index">
+                  v-for="(food,index) in good.foods" :key="index" @click="showFood(food)">
                 <div class="icon">
                   <img width="57" height="57"
                        :src="food.icon">
@@ -43,6 +43,8 @@
         </ul>
       </div>
     </div>
+    <!--父组件没有food，点击的时候给添加food-->
+    <Food :food="food" ref="food"/>
   </div>
 </template>
 <script>
@@ -59,13 +61,18 @@
   *
   * */
   import BScroll from 'better-scroll';
+  import Food from '../../../components/Food/Food.vue'
   import {mapState} from "vuex";
   export default {
     data() {
       return {
         scrollY: 0,//右侧列表Y轴方向滑动的坐标
-        tops: [] //右侧所有li的top值
+        tops: [], //右侧所有li的top值
+        food:{}   //当前需要声明的food，点击的时候，更新food值
       }
+    },
+    components:{
+      Food
     },
     computed: {
       ...mapState(["goods"]),
@@ -106,7 +113,7 @@
           this.scrollY = Math.abs(y);
         });
       },
-      //
+      //滚动ScrollY
       _initScrollY() {
         const tops = [];
         //初始化top
@@ -132,6 +139,13 @@
         // 让右侧列表滚动到此处
         this.rightScroll.scrollTo(0, y, 300)
       },
+      //点击显示对应的food
+      showFood(food){
+        //更新food
+        this.food = food;
+        //得到子组件标签
+        this.$refs.food.toggleShow();
+      }
     }
   }
 </script>

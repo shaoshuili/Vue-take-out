@@ -9,4 +9,7 @@ export const RESET_USER = "reset_user";//重置用户信息
 export const RECEIVE_GOODS = "receive_goods";//重置用户信息
 export const RECEIVE_RATINGS = "receive_ratings";//重置用户信息
 export const RECEIVE_INFO = "receive_info";//重置用户信息
+export const INCREMENT_FOOD_COUNT = "increment_food_count";//增加食物数量
+export const DEINCREMENT_FOOD_COUNT = "deincrement_food_count";//增加食物数量
+
 

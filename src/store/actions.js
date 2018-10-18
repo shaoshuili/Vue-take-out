@@ -22,7 +22,9 @@ import {RECEIVE_ADDRESS,
   RECEIVE_USER,
   RESET_USER,
   RECEIVE_INFO,
-  RECEIVE_GOODS
+  RECEIVE_GOODS,
+  INCREMENT_FOOD_COUNT,
+  DEINCREMENT_FOOD_COUNT
 } from "./mutation-types"
 
 
@@ -103,6 +105,17 @@ export default {
      const ratings = result.data;
      commit(RECEIVE_INFO,{ratings})
    }
+  },
+  //更新食物的数量
+  updateFoodCount({commit},{isAdd,food}){
+   //判断,true增加
+    if(isAdd){
+      commit(INCREMENT_FOOD_COUNT,{food});
+    }else {
+      //false减少
+      commit(DEINCREMENT_FOOD_COUNT,{food});
+
+    }
   }
 }
 
